@@ -18,6 +18,11 @@ export interface Options {
    * Path to tsconfig.json, by default, will try to load 'tsconfig.json'
    */
   tsconfig?: string;
+
+  /**
+   * Include these specific (external) libraries in the bundle
+   */
+  include?: string[];
 }
 
 export function resolveDefaultOptions(options: Options) {
