@@ -1,7 +1,6 @@
 .testoutput
 .nyc_output
 coverage
-dist
 /node_modules
 .build
 .DS_Store
