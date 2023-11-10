@@ -134,10 +134,13 @@ const plugin: PluginImpl<Options> = (options = {}) => {
         return;
       }
 
-      if (!respectExternal && resolvedModule.isExternalLibraryImport) {
+      const isIncluded = (module: ts.ResolvedModuleFull) => ctx.resolvedOptions.include && module.packageId?.name && ctx.resolvedOptions.include.find(i => module.packageId?.name == i);
+
+      if ((!respectExternal && resolvedModule.isExternalLibraryImport) && !isIncluded(resolvedModule)) {
         // here, we define everything that comes from `node_modules` as `external`.
         return { id: source, external: true };
       } else {
+        resolvedModule.packageId?.name && console.log(`>>> module ${resolvedModule.packageId?.name} will be resolved from ${resolvedModule.resolvedFileName}`);
         // using `path.resolve` here converts paths back to the system specific separators
         return { id: path.resolve(resolvedModule.resolvedFileName) };
       }
