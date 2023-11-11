@@ -20,12 +20,17 @@ export interface Options {
    * `baseUrl` and `paths` properties, you can pass in `compilerOptions`.
    */
   compilerOptions?: ts.CompilerOptions;
+
+  /**
+   * Include these specific (external) libraries in the bundle
+   */
+  include?: string[];
 }
 
 const plugin: PluginImpl<Options> = (options = {}) => {
   const transformPlugin = transform(options);
 
-  const { respectExternal = false, compilerOptions = {} } = options;
+  const { respectExternal = false, compilerOptions = {}, include = undefined } = options;
   // There exists one Program object per entry point,
   // except when all entry points are ".d.ts" modules.
   let programs: Array<ts.Program> = [];
@@ -134,7 +139,7 @@ const plugin: PluginImpl<Options> = (options = {}) => {
         return;
       }
 
-      const isIncluded = (module: ts.ResolvedModuleFull) => ctx.resolvedOptions.include && module.packageId?.name && ctx.resolvedOptions.include.find(i => module.packageId?.name == i);
+      const isIncluded = (module: ts.ResolvedModuleFull) => include && module.packageId?.name && include.find(i => module.packageId?.name == i);
 
       if ((!respectExternal && resolvedModule.isExternalLibraryImport) && !isIncluded(resolvedModule)) {
         // here, we define everything that comes from `node_modules` as `external`.
